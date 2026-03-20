@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -5,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ContosoUniversity.Data;
 using ContosoUniversity.Models;
 
-namespace ContosoUniversity.Pages.Courses
+namespace ContosoUniversity.Pages.Departments
 {
     public class DetailsModel : PageModel
     {
@@ -16,7 +19,7 @@ namespace ContosoUniversity.Pages.Courses
             _context = context;
         }
 
-        public Course Course { get; set; } = default!;
+        public Department Department { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -25,16 +28,16 @@ namespace ContosoUniversity.Pages.Courses
                 return NotFound();
             }
 
-            Course = await _context.Courses
-                .AsNoTracking()
-                .Include(c => c.Department)
-                .FirstOrDefaultAsync(m => m.CourseID == id);
+            var department = await _context.Departments.FirstOrDefaultAsync(m => m.DepartmentID == id);
 
-            if (Course == null)
+            if (department is not null)
             {
-                return NotFound();
+                Department = department;
+
+                return Page();
             }
-            return Page();
+
+            return NotFound();
         }
     }
 }
